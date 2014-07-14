@@ -1,7 +1,7 @@
 # Hoard server image
 
 # Base Docker File
-FROM ubuntu:13.04
+FROM ubuntu:14.04
 
 # Maintainer
 MAINTAINER outrunthewolf/marcqualie
@@ -38,6 +38,8 @@ RUN git clone git://github.com/phalcon/cphalcon.git /home/downloads/phalcon && \
 # Create the ini file
 RUN echo "extension=phalcon.so" > /etc/php5/mods-available/phalcon.ini
 RUN ln -s /etc/php5/mods-available/phalcon.ini /etc/php5/fpm/conf.d/20-phalcon.ini
+RUN ln -s /etc/php5/mods-available/phalcon.ini /etc/php5/cli/conf.d/20-phalcon.ini
+RUN ln -s /etc/php5/mods-available/phalcon.ini /etc/php5/cgi/conf.d/20-phalcon.ini
 
 # Add all the files
 ADD app /home/hoard/app
