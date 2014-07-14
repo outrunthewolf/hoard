@@ -10,11 +10,14 @@ MAINTAINER outrunthewolf/marcqualie
 ENV SITEPATH "/home/hoard"
 RUN mkdir -p /home/downloads
 
+# Create hoard user
+RUN useradd -d /home/hoard hoard
+
 # Update the box
 RUN apt-get update
 
 # Install various packages, including composer
-RUN apt-get install -y git-core php5 php5-fpm php5-cgi php5-cli spawn-fcgi curl php5-curl php5-mcrypt nano htop openssh-server gcc libpcre3 libpcre3-dev libssl-dev make php5-dev php-pear
+RUN apt-get install -y git-core php5 php5-fpm php5-cgi php5-cli spawn-fcgi curl php5-curl php5-mcrypt nano htop openssh-server gcc libpcre3 libpcre3-dev libssl-dev make php5-dev php-pear php5-mysql
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/bin/composer
 
@@ -31,11 +34,10 @@ RUN echo "extension=mongo.so" >> /etc/php5/fpm/php.ini
 RUN git clone git://github.com/phalcon/cphalcon.git /home/downloads/phalcon && \
     cd /home/downloads/phalcon/build && \
     ./install
-RUN echo "extension=phalcon.so" >> /etc/php5/cli/php.ini
-RUN echo "extension=phalcon.so" >> /etc/php5/fpm/php.ini
 
-# Install PDO after phalcon?
-RUN apt-get install -y php5-mysql
+# Create the ini file
+RUN echo "extension=phalcon.so" > /etc/php5/mods-available/phalcon.ini
+RUN ln -s /etc/php5/mods-available/phalcon.ini /etc/php5/fpm/conf.d/20-phalcon.ini
 
 # Add all the files
 ADD app /home/hoard/app
@@ -63,10 +65,10 @@ RUN mkdir /usr/local/nginx/conf/sites-available && \
 	mkdir /usr/local/nginx/conf/sites-enabled
 
 # Add base nginx conf
-ADD ./docker/nginx/default_nginx_conf /usr/local/nginx/conf/nginx.conf
+ADD ./docker/nginx/default_nginx_config /usr/local/nginx/conf/nginx.conf
 
 # Add a default vhost, activate host file
-ADD ./docker/ngix/default_nginx_vhost /usr/local/nginx/conf/sites-available/default.conf
+ADD ./docker/nginx/default_nginx_vhost /usr/local/nginx/conf/sites-available/default.conf
 RUN ln -s /usr/local/nginx/conf/sites-available/default.conf /usr/local/nginx/conf/sites-enabled/default.conf
 
 # Set up php fpm, restart php
