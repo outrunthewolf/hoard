@@ -1,26 +1,30 @@
 server {
-    listen 8000;
-    root /home/hoard/public;
-    index index.php index.html;
 
-    location / {
-        try_files $uri $uri/ /index.php;
+    listen   80;
+    server_name localhost.dev;
+
+    index index.php index.html index.htm;
+    set $root_path '/home/hoard/public';
+    root $root_path;
+
+    try_files $uri $uri/ @rewrite;
+
+    location @rewrite {
+        rewrite ^/(.*)$ /index.php?_url=/$1;
     }
 
-    location ~* \.(?:ico|css|js|gif|jpe?g|png|ttf|woff)$ {
-        access_log off;
-        expires 30d;
-        add_header Pragma public;
-        add_header Cache-Control "public, mustrevalidate, proxy-revalidate";
-    }
-
-    location = /robots.txt { access_log off; log_not_found off; }
-    location = /favicon.ico { access_log off; log_not_found off; }
-
-    location ~ \.php$ {
+    location ~ \.php {
         fastcgi_pass 127.0.0.1:9000;
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param HTTPS off;
+    }
+
+    location ~* ^/(css|img|js|flv|swf|download)/(.+)$ {
+        root $root_path;
+    }
+
+    location ~ /\.ht {
+        deny all;
     }
 }

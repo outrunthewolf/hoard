@@ -17,7 +17,7 @@ RUN useradd -d /home/hoard hoard
 RUN apt-get update
 
 # Install various packages, including composer
-RUN apt-get install -y git-core php5 php5-fpm php5-cgi php5-cli spawn-fcgi curl php5-curl php5-mcrypt nano htop openssh-server gcc libpcre3 libpcre3-dev libssl-dev make php5-dev php-pear php5-mysql
+RUN apt-get install -y git-core php5 php5-fpm php5-cgi php5-cli spawn-fcgi curl php5-curl php5-mcrypt nano htop openssh-server gcc libpcre3 libpcre3-dev libssl-dev make php5-dev php-pear php5-mysql re2c
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/bin/composer
 
@@ -29,6 +29,7 @@ RUN apt-get install -y mongodb-org
 RUN pecl install mongo
 RUN echo "extension=mongo.so" >> /etc/php5/cli/php.ini
 RUN echo "extension=mongo.so" >> /etc/php5/fpm/php.ini
+RUN mkdir -p /data/db
 
 # Install Phalcon
 RUN git clone git://github.com/phalcon/cphalcon.git /home/downloads/phalcon && \
@@ -41,15 +42,40 @@ RUN ln -s /etc/php5/mods-available/phalcon.ini /etc/php5/fpm/conf.d/20-phalcon.i
 RUN ln -s /etc/php5/mods-available/phalcon.ini /etc/php5/cli/conf.d/20-phalcon.ini
 RUN ln -s /etc/php5/mods-available/phalcon.ini /etc/php5/cgi/conf.d/20-phalcon.ini
 
-# Add all the files
+# Install the hoard extension
+RUN git clone https://github.com/json-c/json-c.git /home/downloads/json-c && \
+    cd /home/downloads/json-c && \
+    sh autogen.sh && \
+    ./configure && \
+    make && make install
+
+RUN git clone https://github.com/phalcon/zephir /home/downloads/zephir && \
+    cd /home/downloads/zephir && \
+    ./install -c
+
+RUN git clone https://github.com/marcqualie/hoard-utils.git /home/downloads/hoard-utils && \
+    cd /home/downloads/hoard-utils && \
+    make && make install
+RUN echo "extension=hoardutils.so" > /etc/php5/mods-available/hoardutils.ini
+RUN ln -s /etc/php5/mods-available/hoardutils.ini /etc/php5/fpm/conf.d/20-hoardutils.ini
+RUN ln -s /etc/php5/mods-available/hoardutils.ini /etc/php5/cli/conf.d/20-hoardutils.ini
+RUN ln -s /etc/php5/mods-available/hoardutils.ini /etc/php5/cgi/conf.d/20-hoardutils.ini
+
+# Add all the files - possibly move to a git pull
 ADD app /home/hoard/app
 ADD bin /home/hoard/bin
 ADD public /home/hoard/public
 ADD composer.json /home/hoard/composer.json
 
+~ Do some file perms etc
+RUN chown -Rf hoard:hoard /home/hoard
+ADD docker/scripts/start /home/start
+
 # Compose the shit out of stuff
 RUN cd /home/hoard && \
     composer update
+
+# D some assets tings
 
 # Install an nginx server
 # Download and install nginx
@@ -78,9 +104,9 @@ ADD ./docker/nginx/default_php_pool /etc/php5/fpm/pool.d/default.conf
 RUN touch /var/log/php-slowlog.log
 
 # Expose a port
-EXPOSE 8000
+# EXPOSE 8000
 
 # Start php, mongo and nginx
-ENTRYPOINT service php5-fpm start && \
-           mongod & && \
-           /usr/local/nginx/sbin/nginx
+#ENTRYPOINT service php5-fpm restart && \
+#           /usr/local/nginx/sbin/nginx & mongod &
+           

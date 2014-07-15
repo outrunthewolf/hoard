@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+chown -R mongodb:mongodb /var/lib/mongodb
+exec sudo -u mongodb -H /usr/bin/mongod &
+/usr/local/nginx/sbin/nginx &
+service php5-fpm restart
