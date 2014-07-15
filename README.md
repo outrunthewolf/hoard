@@ -17,7 +17,7 @@ cd hoard
 composer update
 ```
 
-### Running 
+### Running
 Because hoard is a php application, you can run it in any way you see fit. Be it the in built PHP server:
 
 PHP server
@@ -39,6 +39,5 @@ You can run this as a daemonised instance like so.
 docker run -d my/hoard:1.0
 ```
 You'll find hoard up and running by default on port 8000.
-
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/marcqualie/hoard/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
