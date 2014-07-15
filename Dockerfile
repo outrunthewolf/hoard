@@ -76,3 +76,11 @@ RUN ln -s /usr/local/nginx/conf/sites-available/default.conf /usr/local/nginx/co
 # Set up php fpm, restart php
 ADD ./docker/nginx/default_php_pool /etc/php5/fpm/pool.d/default.conf
 RUN touch /var/log/php-slowlog.log
+
+# Expose a port
+EXPOSE 8000
+
+# Start php, mongo and nginx
+ENTRYPOINT service php5-fpm start && \
+           mongod & && \
+           /usr/local/nginx/sbin/nginx
