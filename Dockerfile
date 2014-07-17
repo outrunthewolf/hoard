@@ -67,15 +67,9 @@ ADD bin /home/hoard/bin
 ADD public /home/hoard/public
 ADD composer.json /home/hoard/composer.json
 
-~ Do some file perms etc
-RUN chown -Rf hoard:hoard /home/hoard
-ADD docker/scripts/start /home/start
-
 # Compose the shit out of stuff
 RUN cd /home/hoard && \
     composer update
-
-# D some assets tings
 
 # Install an nginx server
 # Download and install nginx
@@ -103,10 +97,6 @@ RUN ln -s /usr/local/nginx/conf/sites-available/default.conf /usr/local/nginx/co
 ADD ./docker/nginx/default_php_pool /etc/php5/fpm/pool.d/default.conf
 RUN touch /var/log/php-slowlog.log
 
-# Expose a port
-# EXPOSE 8000
-
-# Start php, mongo and nginx
-#ENTRYPOINT service php5-fpm restart && \
-#           /usr/local/nginx/sbin/nginx & mongod &
+ENTRYPOINT service php5-fpm restart && \
+           /usr/local/nginx/sbin/nginx
            
