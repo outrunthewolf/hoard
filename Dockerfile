@@ -51,16 +51,6 @@ RUN ln -s /etc/php5/mods-available/hoardutils.ini /etc/php5/fpm/conf.d/20-hoardu
 RUN ln -s /etc/php5/mods-available/hoardutils.ini /etc/php5/cli/conf.d/20-hoardutils.ini
 RUN ln -s /etc/php5/mods-available/hoardutils.ini /etc/php5/cgi/conf.d/20-hoardutils.ini
 
-# Add all the files - possibly move to a git pull
-#ADD app /home/hoard/app
-#ADD bin /home/hoard/bin
-#ADD public /home/hoard/public
-#ADD composer.json /home/hoard/composer.json
-
-# Compose the shit out of stuff
-#RUN cd /home/hoard && \
-#    composer update
-
 # Install an nginx server
 # Download and install nginx
 RUN mkdir -p /home/downloads/nginx && \
@@ -87,5 +77,7 @@ RUN ln -s /usr/local/nginx/conf/sites-available/default.conf /usr/local/nginx/co
 ADD ./docker/nginx/default_php_pool /etc/php5/fpm/pool.d/default.conf
 RUN touch /var/log/php-slowlog.log
 
-ENTRYPOINT service php5-fpm restart && \
+ENTRYPOINT cd /home/hoard && \
+           composer update && \
+           service php5-fpm restart && \
            /usr/local/nginx/sbin/nginx
