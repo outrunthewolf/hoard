@@ -33,11 +33,19 @@ If you run docker, you can get an isolated instance of hoard running including a
 cd path/to/hoard
 docker build -t my/hoard:1.0 .
 ```
-You can run this as a daemonised instance like so.
+By default hoard uses mongodb. To further containerise the application you must run any monogdb container accessible on the correct port.
+
+Here's a quick example using dockers mongodb trusted docker file [here](https://github.com/dockerfile/mongodb)
 
 ```bash
-docker run -d my/hoard:1.0
+docker run -d -p 27017:27017 --name mongodb dockerfile/mongodb
 ```
-You'll find hoard up and running by default on port 8000.
+
+Then we link the hoard container aswell as mounting the files, like so
+
+```bash
+docker run -d -p 80 -v /my/local/hoard:/home/hoard --link mongodb:mongodb --name hoard my/hoard:1.0
+```
+run docker ps to see the random port assigned to hoard.
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/marcqualie/hoard/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
