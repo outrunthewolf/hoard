@@ -21,16 +21,6 @@ RUN apt-get install -y git-core php5 php5-fpm php5-cgi php5-cli spawn-fcgi curl 
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/bin/composer
 
-# Install MongoDB
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-RUN echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | tee /etc/apt/sources.list.d/mongodb.list
-RUN apt-get update
-RUN apt-get install -y mongodb-org
-RUN pecl install mongo
-RUN echo "extension=mongo.so" >> /etc/php5/cli/php.ini
-RUN echo "extension=mongo.so" >> /etc/php5/fpm/php.ini
-RUN mkdir -p /data/db
-
 # Install Phalcon
 RUN git clone git://github.com/phalcon/cphalcon.git /home/downloads/phalcon && \
     cd /home/downloads/phalcon/build && \
