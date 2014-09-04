@@ -12,14 +12,17 @@ $router->notFound([
 $router->add('/', 'Home::index')->setName('home');
 
 // Standard Controllers
+/*
 $router->addResource('Sessions', '/sessions');
 $router->addGet('/login', 'Sessions::new')->setName('login');
 $router->addGet('/logout', 'Sessions::destroy')->setName('logout');
 $router->addResource('Buckets', '/buckets');
+*/
 
 // API resources
 $router->addResource('Api\Users', '/api/users');
 $router->addResource('Api\Events', '/api/events');
+$router->addResource('Api\Buckets', '/api/buckets');
 
 // Return instance for dependency injection
 return $router;
