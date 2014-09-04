@@ -11,12 +11,30 @@ use MongoId;
 class BucketsController extends ApiController
 {
     /**
-     * @Get('/')
+     * @Get("/")
      */
     public function indexAction()
     {
-        $events = Bucket::find();
-        $this->respondWith($events);
+        $buckets = Bucket::find();
+        $this->respondWith($buckets);
+    }
+
+    /**
+     * @Get("/{id:[a-zA-Z0-9]+}")
+     */
+    public function showAction($id)
+    {
+        $bucket = Bucket::findById($id);
+        $this->respondWith($bucket);
+    }
+
+    /**
+     * @Get("/{id:[a-zA-Z0-9]+}/events")
+     */
+    public function eventAction($id)
+    {
+        $bucket = Bucket::findById($id);
+        $this->respondWith($bucket->getEvents());
     }
 
     /**
@@ -29,11 +47,7 @@ class BucketsController extends ApiController
 
         // Validate a bucket name
         if(!isset($payload->name)) 
-            return $this->errorWith(400, "Buckets must have a lovely name!");
-
-        // Check a bucket name doesn't already exist
-        if(Bucket::count("name='" . $payload->name . "'") > 0)
-            return $this->errorWith(400, "This bucket already exists");
+            return $this->respondWith([], 400, "Buckets must have a lovely name!");
 
         // Create a new event
         $bucket = new Bucket;
@@ -50,16 +64,11 @@ class BucketsController extends ApiController
     {
         // Check the bucket id is being sent
         if(!isset($name))
-            return $this->errorWith(400, "You must specify a bucket by name");
-
-        // Check the bucket id exists
-        if(Bucket::count("name='" . $name . "'") < 1)
-            return $this->errorWith(400, "The bucket cannot be found");
+            return $this->respondWith([], 400, "You must specify a bucket by name");
 
         // Delete the bucket
         $bucket = Bucket::findFirst("name='" . $name . "'");
         $bucket->delete();
         $this->respondWith("The bucket was deleted");
-
     }
 }

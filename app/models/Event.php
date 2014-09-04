@@ -16,7 +16,6 @@ class Event extends Phalcon\Mvc\Collection
 
     public function beforeCreate()
     {
-        $this->bucket_id = null;
         if (! $this->created_at) {
             $this->created_at = new MongoDate();
         }
