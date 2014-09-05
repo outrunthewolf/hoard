@@ -28,6 +28,30 @@ class Security extends Plugin
             return true;
         }
 
+        // Key check for API
+        /*
+                // Get the header and look for an auth key
+        $header = $this->request->getHeaders();
+        $authCode = isset($header['AUTHORIZATION']) ? str_replace('Bearer', '', $header['AUTHORIZATION']) : false;
+
+        // Check we're authorised
+        if(!$authCode) {
+            $this->respondWith([], 403, "No access key");
+            exit;
+        }
+
+        // Check for a user with the key
+        $user = User::findFirst(array(
+            "key" => $authCode
+        ));
+
+        // Deny the request if the key isn't active
+        if($user->count() < 1) {
+            $this->respondWith([], 403, "Access denied");
+            exit;
+        }
+        */
+
         // Redirect to /login if user is not logged in
         if ($controller !== 'sessions' && ! $this->user) {
             $this->view->disable();

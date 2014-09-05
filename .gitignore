@@ -1,8 +1,6 @@
 vendor
 node_modules
 .sass-cache
-public/assets/*.js
-public/assets/*.css
 *.volt.php
 *.volt%%e%%.php
 composer.phar

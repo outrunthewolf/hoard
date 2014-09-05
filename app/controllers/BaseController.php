@@ -16,13 +16,11 @@ class BaseController extends Phalcon\Mvc\Controller
         ));
 
         // Pre-load user when logged in
-        /*
         if ($this->session->has('auth_id')) {
             $user_id = $this->session->get('auth_id');
             $this->authUser = User::findById($user_id);
             $this->view->setVar('authUser', $this->authUser);
         }
-        */
 
         // Create a server metrics instance
         $this->view->setVar('serverMetrics', new HoardUtils\ServerMetrics);

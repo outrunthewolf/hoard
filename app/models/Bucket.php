@@ -76,5 +76,4 @@ class Bucket extends Phalcon\Mvc\Collection
         $stats = $this->getConnection()->command(['collStats' => $this->getEventCollection()->getName()]);
         return round($stats['storageSize'] / 1024 / 1024, 2);
     }
-
 }

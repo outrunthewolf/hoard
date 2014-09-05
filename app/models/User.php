@@ -10,6 +10,7 @@ class User extends Phalcon\Mvc\Collection
     public $password;
     public $created_at;
     public $updated_at;
+    public $key_id;
 
     public function getSource()
     {
@@ -26,6 +27,7 @@ class User extends Phalcon\Mvc\Collection
     public function beforeSave()
     {
         $this->updated_at = new MongoDate();
+        $this->key = md5(microtime() . rand());
     }
 
     public function getBuckets()

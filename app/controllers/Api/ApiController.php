@@ -3,6 +3,7 @@
 namespace Api;
 
 use Phalcon\Mvc\Controller as BaseController;
+use User;
 
 class ApiController extends BaseController
 {
